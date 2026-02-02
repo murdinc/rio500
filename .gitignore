@@ -1,0 +1,21 @@
+# Compiled binary
+rio500
+
+# macOS
+.DS_Store
+._*
+
+# EEPROM dumps (debugging artifacts)
+eeprom_*.bin
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Test artifacts
+*.log
+
+# Claude
+.claude/

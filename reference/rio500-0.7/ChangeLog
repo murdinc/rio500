@@ -1,0 +1,304 @@
+2000-6-10 Keith Clayton <kclayton@jps.net>
+
+	* Added font support to librio500_api
+	  Added smartmedia support to librio500_api
+	  Bug fixes to rio_del_song, rio_add_folder
+
+2000-5-28 Keith Clayton <kclayton@jps.net>
+
+	* Merged in Tim Rice's smartmedia support
+	  Bug fixes from Iwasa Kazmi
+	  Bug fixes from David Makepeace
+
+2000-5-19 Bruce Tenison <btenison@dibbs.net>
+
+	* Couple of Memory leaks fixed (as suggested from the person
+	  who posted the bug in the Bug Manager..  Whoever you are, THANKS!)
+
+2000-5-19 Bruce Tenison <btenison@dibbs.net>
+
+	* Merge in Tim Rice's code to query the firmware revision
+	  (slightly modified to fix minor revision numbers)
+
+2000-5-19 Keith Clayton <kclayton@jps.net)
+
+	* Merged in Tim Rice's code to support > 8 folders (now 256)
+	  Removed check for < 8 folders from rio_add_folders
+	  Fixed bug in librio500-usbdevfs causing rio_stat to segfault
+	  on exit when no folders present
+
+2000-5-14 Keith Clayton <kclayton@jps.net)
+
+	* Endian fixes for usbdrvlinux.c
+	  Modifications to librio500.h for Alpha compatability
+
+2000-5-08 Bruce Tenison <btenison@dibbs.net>
+
+	* More updates to usbdevfs.  This time, don't parse the devices file.
+	  It's too slow, and only meant for human consumption.
+
+2000-5-07 Bruce Tenison <btenison@dibbs.net>
+
+	* Major update to the usbdevfs stuff.  Newer version of usbdrvlinux.c
+	  Seems that usbdevfs has changed a bit and was warning about an unclaimed
+	  interface 0, so we needed to do a bit of a rewrite!
+
+2000-5-07 Bruce Tenison <btenison@dibbs.net>
+
+	* Added David Makepeace's changes to support non 128kbps encoded mp3s
+	  (so that the rio500 correctly calculates the total song time)
+
+2000-4-16 Bruce Tenison <btenison@dibbs.net>
+
+	* Something has changed recently in the kernels, and usbdevice_fs.h
+	  is now in /usr/include/linux and some errors have cropped up.
+	  Adding a #include <linux/types.h> fixes these errors
+
+2000-4-13 Keith Clayton <kclayton@jps.net>
+
+	* Fixed bug in rio_del_song when non-existent index specified
+
+2000-4-10 Bruce Tenison <btenison@dibbs.net>
+
+	* Updated rio_get_song.c to usbdevfs specs.  Also added wrapper
+	  functions bulk_read and bulk_write to be similar to the kernel
+	  driver functions (removes some #ifndef's from rio_get_song
+	  and rio_add_song)  Cleanup in bulk_read and bulk_write for
+	  librio500_api.c
+
+2000-4-10 Cesar Miquel <miquel@df.uba.ar>
+
+	* Added rio_get_song.c. This program allows users to download
+	  any type of files from the Rio. Its basically a hack since
+	  the rio is not designed to be used in that way but it works
+	  fine.
+
+2000-4-07 Bruce Tenison <btenison@dibbs.net>
+
+	* Multiple cleanups.  Added ElectricFence support for debugging,
+	  fixed misplaced frees that were causing core dumps with usbdevfs
+
+2000-3-31 Keith Clayton <kclayton@jps.net>
+
+	* Fixed bug in setting fontname in rio_add_song, rio_add_folder
+
+2000-3-28 Keith Clayton <kclayton@jps.net>
+
+	* Merged ID3v1 support into rio_add_song.  Code by Tomoaki
+	  MITSUYOSHI.  Fixed rio_add_directory script to reflect changes
+	  in rio_add_song (long switches)
+
+2000-3-28 Bruce Tenison <btenison@dibbs.net>
+
+	* Added config.h to lib/usbdrvlinux.c and ifdef'd the entire file to 
+	  conditionally compile on WITH_USBDEVFS
+
+2000-3-28 Bruce Tenison <btenison@dibbs.net>
+
+	* usbdevfs support added in.  This finally works here.  I had to
+	  make librio500 and librio500_api contain the usbdevfs library functions
+	  all of the time, and not be dynamically compiled based on the configure
+	  options.
+
+2000-3-27 Keith Clayton <kclayton@jps.net>
+
+	* Long swtich support added to rio_del_song.  Folder number now set
+	  with --folder switch.  Multiple songs can be deleted at one time.
+	  Using the --byname switch, you can specify folder/song names rather
+	  than index numbers.  Small changes to rio_add_song, rio_font_info
+	  for BSD compatability (Iwasa Kazmi).
+
+2000-3-18 Cesar Miquel <miquel@df.uba.ar>
+	* Addeded function song_new_entry () to librio500.c.
+	* Addeded functions to rename songs and folders to librio500_api.[ch]
+	* Modified add_song_to_list to use sone_entry_new ()
+
+2000-3-18 Keith Clayton <kclayton@jps.net>
+
+	* Long (gnu-style) switch support added to rio_format, rio_add_song,
+	  rio_stat, rio_add_folder.  fontname, fontnumber now set via
+	  switches for rio_add_song, rio_add_folder.  foldernumber now set
+	  via switch for rio_add_song.  Multiple files/folders can now be 
+	  specified when using rio_add_song, rio_add_folder.  Getopt source
+	  files included in source tree for BSD compatibility (Iwasa Kazmi).
+	  rio500_usb.h fixes for BSD compatiblity (Iwasa Kazmi).  Makefile fix
+          when --without-usbdevfs specified in configure script (Iwasa Kazmi).
+
+2000-3-11 Keith Clayton <kclayton@jps.net>
+
+	* Patch from Tomoaki MITSUYOSHI for preliminary id3 support applied
+          Added --with(out)-id3support options configure script
+          Bug fixes to rio_del_song from Tomoaki
+
+2000-3-08 Keith Clayton <kclayton@jps.net>
+
+	* Patch from *BSD guys for BSD compatiblity applied
+
+2000-3-06 Bruce Tenison <btenison@dibbs.net>
+	* More usbdevfs changes.  Removed libusb stuff and am now using some
+	  of Thomas Sailer's usbdrvlinux package.  Seems to work better.  Can
+	  now see folders in rio_stat. rio_format and rio_add_folder work
+	  (although sometimes something gets garbled in transmission to the Rio).
+
+2000-3-05 Bruce Tenison <btenison@dibbs.net>
+
+	* Made usbdevfs librio500-usbdevfs.a library compile to a librio500.a
+	  file.  This allows gtkrio to access the new usbdevfs lib, although
+	  Bulk Reads still don't work.
+
+2000-3-05 Bruce Tenison <btenison@dibbs.net>
+
+	* Added a lot of new code to support usbdevfs.  Bulk read is still not
+	  working correctly, but bulk_write and control_msgs seem to be working.
+	  If you don't use the configure option --with-usbdevfs, things
+	  shouldn't change.
+
+2000-2-26 Cesar Miquel <miquel@df.uba.ar>
+
+	* librio500_api.[ch] Added a function rio_memory_left (Rio500 *rio) 
+	  to get the amount of free memory left from the rio.
+
+2000-2-18 Bruce Tenison <btenison@dibbs.net>
+
+	* Various driver cleanups.  driver_devel now works.  Re-indented
+	  both driver and driver_devel.  Moved a lot of defines and structs
+	  out to include/rio_usb.h.  Started include/rio_usb_devel.h, since
+	  new driver_devel doesn't need wait_q.  Changed both driver and 
+	  driver_devel to NOT use a typedef.  Linus hates typedefs!
+
+2000-2-16 Bruce Tenison <btenison@dibbs.net>
+
+	* Added configuration options to locate the /dev/usb/rio500 entry
+	  where the user wishes (defaults to /dev/usb/rio500)
+
+2000-2-13 Cesar Miquel <miquel@df.uba.ar>
+
+	* lib/libfon.c changed fon_write_string () so that it make sure
+	  that the string supplied by the user doesn't exceed the 
+	  space for the bitmap.
+
+2000-2-13 Keith Clayton <kclayton@jps.net>
+
+	* Renamed add_directory to rio_add_directory.  Updated rio_add_directory
+	  to use rio_add_song.  Updated README to reflect rio_add_song, etc.
+	  Updated scripts directory so make would look for rio_add_directory
+
+2000-2-12 Cesar Miquel <miquel@df.uba.ar>
+	
+	* librio500_api.[ch] added all the code to format, create/delete
+	  folders and to transfer songs to the rio. I've also update 
+	  gtkrio500 and they seem to work fine.
+
+2000-2-11 Bruce Tenison <btenison@dibbs.net>
+	
+	* Added driver_devel.c Currently partially rewritten to match
+	  0.4 version of scanner.c in the kernel (2.3.43-pre)  It currently
+	  doesn't work properly, though. :(
+
+2000-2-11 Bruce Tenison <btenison@dibbs.net>
+
+	* CVS list added.  Subscribe to the rio500-cvs list at our
+	  project page to get the cvs commit emails
+
+2000-2-10 Bruce Tenison <btenison@dibbs.net>
+
+	* Changed the command-line utilities as per Nick's suggestion
+	  that they start with rio_ to be more consistent.  Removed the
+	  TODO entry for this, and fixed a bug in configure.in (font path)
+
+
+2000-2-8  Bruce Tenison <btenison@dibbs.net>
+
+	* More changes.  Remove the gtk checks.  Installed glib checks
+	  in configure.in  Renamed rio500_api.h and .c to librio500_api.h
+	  and .c
+
+2000-2-7  Bruce Tenison <btenison@dibbs.net>
+
+	* LOTS of changes.  Restructuring since we now have automake/
+	  autoconf support.  If you need to regenerate all of the 
+	  configure scripts (Makefile.in's etc..) type ./autogen.sh
+	  otherwise ./configure should figure out everything (I hope)
+	  Also note that, by default, installation is in /usr/local/bin,
+	  /usr/local/lib, /usr/local/include, and /usr/local/share/rio500/fonts
+
+2000-2-4  Bruce Tenison <btenison@dibbs.net>
+
+	* Fixed add_folder and add_song to infer the pathname to the
+	  font files from the makefile.  This should make add_directory
+	  and the usage a bit easier.
+
+2000-2-3  Bruce Tenison <btenison@dibbs.net>
+
+	* Changed a lot. ;)  Renamed format-rio to format_rio to be
+	  consistent with the other functions.  Moved the psf font
+	  into the fonts dir.  Changed the makefile, add_song.c,
+	  add_folder.c, librio500.c, libpsf.c, libfon.c, config.h,
+	  to load the fonts from a dir defined in the makefile.  
+	  Renamed this file to ChangeLog (automake was complaining, 
+	  and annoying me!) Also added a safe_strcpy function from
+	  samba.
+
+2000-2-1  Cesar Miquel <miquel@df.uba.ar>
+
+	* Changed rio_stat.c, add_song.c, add_folder.c, format-rio.c,
+	  librio500.c and librio.h so that they compile without warnings
+	  when compiled with -Wall.
+
+2000-2-1  Cesar Miquel <miquel@df.uba.ar>
+
+	* Modified rio_stat.c so that it displays free memory in Mb.
+
+2000-1-31 Keith Clayton <kclayton@jps.net>
+
+	* First release of add_directory script.
+
+2000-1-31 Cesar Miquel <miquel@df.uba.ar>
+
+	* Changed libfon.c so that it uses proportional spacing when writting
+	  strings to the rio. Added a function which calculates the width of
+	  a char.
+
+2000-1-30 Bruce Tenison <btenison@dibbs.net>
+
+	* Added optional arguments to the add_folder and the add_song
+	  programs (font_name and font_number)
+
+2000-1-30 Cesar Miquel <miquel@df.uba.ar>
+
+	* Corrected a bug that appeared in del_song.c when trying to
+          erase a song which wasn't on the first folder.
+
+2000-1-29 Keith Clayton <kclayton@jps.net>
+
+        * Set up bitmap_data_new routine to first try to load .fon files,
+          then try a default .psf file and lastly fall back on the default mp3
+          bitmap
+
+	* Endian fixes for big endian platforms in libfon.c
+
+2000-1-29 Cesar Miquel <miquel@df.uba.ar>
+
+	* Added the del_song.c file to the repository. This needs a 
+          little testing still.
+
+2000-1-29 Bruce Tenison <btenison@dibbs.net>
+
+	* Added font_info to obtain number of and types of fonts 
+	  embedded within .fon raster font files.
+
+2000-1-28 Bruce Tenison <btenison@dibbs.net>
+
+	* Added support for Windows .fon Raster fonts (2.0 format only)
+
+2000-1-28 Keith Clayton <kclayton@jps.net>
+        
+        * Endianness fixes for big endian platforms in folder routines
+          in librio500.c
+
+2000-1-26 Cesar Miquel <miquel@df.uba.ar>
+
+	* First mini release. These set of programs can: format the rio,
+	  add folders (up to a maximum of 8) and add songs (up to 24 per
+	  folder). 
+	

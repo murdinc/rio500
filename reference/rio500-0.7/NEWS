@@ -1,0 +1,18 @@
+Apr,2000	* v0.6	Major update
+
+			Kernel driver now a separate download: rio500-linux-driver
+			Kernel driver now in 2.3.51 and greater kernels
+			BSD support . . see README and INSTALL.bsd
+			Permanent major/minor assignment of 180,64
+			New userspace driver for linux using usbdevfs
+			RPMS now available for ppc,i386
+			ID3v1 support
+			All utils now use gnu-style long switches
+			Multiple songs can be added at once with rio_add_song
+			Songs can be added via wildcards with rio_add_song
+			Multiple folders can be added at once with rio_add_folder
+			Multiple songs/folders can be deleted with rio_del_song
+			Songs/folders can be deleted by name with rio_del_song
+			Initial release of rio_get_song
+
+Feb,2000	* v0.5  Inital release

@@ -1,0 +1,219 @@
+dnl Process this file with autoconf to produce a configure script.
+AC_INIT(src/rio_format.c)
+AC_CANONICAL_SYSTEM
+AM_INIT_AUTOMAKE(rio500, 0.6)
+AM_CONFIG_HEADER(include/config.h)
+AC_PREFIX_DEFAULT(/usr/local)
+
+AC_PROG_MAKE_SET
+AC_ISC_POSIX
+AC_PROG_CC
+AM_PROG_CC_STDC
+dnl AC_PROG_RANLIB
+AC_HEADER_STDC
+AC_PROG_INSTALL
+AC_PROG_RANLIB
+
+dnl Check if C compiler understands -c and -o at the same time
+AC_PROG_CC_C_O
+if eval "test \"`echo '$ac_cv_prog_cc_'${ac_cc}_c_o`\" = no"; then
+      BROKEN_CC=
+else
+      BROKEN_CC=#
+fi
+AC_SUBST(BROKEN_CC)
+
+AC_CHECK_HEADERS(fcntl.h sys/ioctl.h unistd.h)
+
+AC_CHECK_SIZEOF(int,cross)
+AC_CHECK_SIZEOF(long,cross)
+AC_CHECK_SIZEOF(short,cross)
+
+AC_C_CONST
+AC_C_INLINE
+AC_C_BIGENDIAN
+AC_C_CHAR_UNSIGNED
+
+AC_CHECK_HEADERS(linux/usbdevice_fs.h)
+AM_PATH_GLIB(1.2.0, ,
+            AC_MSG_ERROR(Cannot find glib: Is glib installed?))
+
+AC_ARG_WITH(fontpath,
+[  --with-fontpath=DIR     Where to put the raster fonts ($ac_default_prefix/fonts)],
+[   case "$withval" in
+    yes|no)
+    #
+    # Just in case anybody calls it without argument
+    #
+    AC_MSG_WARN([--with-fontpath called without argument - will use default])
+    fontpath='$(prefix)/share/rio500/fonts/'
+    datadir='$(prefix)/share/rio500/fonts'
+    ;;
+    * )
+      fontpath="$withval"
+      datadir="$withval"
+    ;;
+    esac
+    AC_SUBST(datadir)
+    AC_SUBST(fontpath)],
+    [fontpath='$(prefix)/share/rio500/fonts/'
+     datadir='$(prefix)/share/rio500/fonts'
+     AC_SUBST(fontpath)
+     AC_SUBST(datadir)]
+)
+
+AC_ARG_WITH(fonfont,
+[  --with-fonfont=FONTFILE Raster Font to use (defjam.fon)],
+[   case "$withval" in
+    yes|no)
+    #
+    # Just in case anybody calls it without argument
+    #
+    AC_MSG_WARN([--with-fonfont called without argument - will use default])
+    fonfont='defjam.fon'
+    ;;
+    * )
+      fonfont="$withval"
+    ;;
+    esac
+    AC_SUBST(fonfont)],
+    [fonfont='defjam.fon'
+     AC_SUBST(fonfont)]
+)
+
+AC_ARG_WITH(psffont,
+[  --with-psffont=FONTFILE Backup Raster Font to use (full path!) (font-bitmaps.psf)],
+[   case "$withval" in
+    yes|no)
+    #
+    # Just in case anybody calls it without argument
+    #
+    AC_MSG_WARN([--with-psffont called without argument - will use default])
+    psffont="$datadir/font-bitmaps.psf"
+    ;;
+    * )
+      psffont="$withval"
+    ;;
+    esac
+    AC_SUBST(psffont)],
+    [psffont="$datadir/font-bitmaps.psf"
+     AC_SUBST(psffont)]
+)
+
+AC_ARG_WITH(devicepath,
+[  --with-devicepath=PATH path to device entry (/dev/usb)],
+[   case "$withval" in
+    yes|no)
+    #
+    # Just in case anybody calls it without argument
+    #
+    AC_MSG_WARN([--with-devicepath called without argument - will use default])
+    devicepath='/dev/usb'
+    ;;
+    * )
+      devicepath="$withval"
+    ;;
+    esac
+    AC_SUBST(devicepath)],
+    [devicepath='/dev/usb'
+     AC_SUBST(devicepath)]
+)
+
+AC_ARG_WITH(deviceentry,
+[  --with-deviceentry=FILE device entry (rio500)],
+[   case "$withval" in
+    yes|no)
+    #
+    # Just in case anybody calls it without argument
+    #
+    AC_MSG_WARN([--with-deviceentry called without argument - will use default])
+    deviceentry='rio500'
+    ;;
+    * )
+      deviceentry="$withval"
+    ;;
+    esac
+    AC_SUBST(deviceentry)],
+    [deviceentry='rio500'
+     AC_SUBST(deviceentry)]
+)
+
+#################################################
+# check for the USBDEVFS filesystem
+AC_MSG_CHECKING(whether to use USBDEVFS)
+AC_ARG_WITH(usbdevfs,
+[  --with-usbdevfs     Include USBDEVFS support
+  --without-usbdevfs  Don't include USBDEVFS support (default)],
+[ case "$withval" in
+  yes)
+    AC_MSG_RESULT(yes)
+    RIO_LIB_OBJ="librio500-usbdevfs.o"
+    EXTRA_A_SOURCES="librio500.c librio500-usbdevfs.c"
+    AC_DEFINE(WITH_USBDEVFS)
+    AC_MSG_WARN([WARNING:  USBDEVFS Support is experimental!])
+    ;;
+  *)
+    AC_MSG_RESULT(no)
+    RIO_LIB_OBJ="librio500.o"
+    EXTRA_A_SOURCES="librio500.c"
+    ;;
+  esac 
+  AC_SUBST(RIO_LIB_OBJ)
+  AC_SUBST(EXTRA_A_SOURCES)],
+  [AC_MSG_RESULT(no)
+  RIO_LIB_OBJ="librio500.o"
+  EXTRA_A_SOURCES="librio500.c"
+  AC_SUBST(RIO_LIB_OBJ)
+  AC_SUBST(EXTRA_A_SOURCES)],
+)
+
+AC_MSG_CHECKING(whether to include ID3 support)
+AC_ARG_WITH(id3support,
+[  --with-id3support     Include ID3 TAG  support
+  --without-id3support  Don't include ID3 TAG support (default)],
+[ case "$withval" in
+  yes)
+    AC_MSG_RESULT(yes)
+    AC_DEFINE(USE_ID3_TAGS)
+    AC_MSG_WARN([WARNING:  ID3 Support is still under development!])
+    ;;
+  *)
+    AC_MSG_RESULT(no)
+    ;;
+  esac
+  ],
+  [AC_MSG_RESULT(no)
+  ],
+)
+
+AC_MSG_CHECKING(whether to link with ElectricFence)
+AC_ARG_WITH(efence,
+[  --with-efence     Link with ElectricFence 
+  --without-efence  Don't Link with ElectricFence (default)],
+[ case "$withval" in
+  yes)
+    AC_MSG_RESULT(yes)
+    efence_lib="-lefence"
+    AC_SUBST(efence_lib)
+    ;;
+  *)
+    AC_MSG_RESULT(no)
+    efence_lib=""
+    AC_SUBST(efence_lib)
+    ;;
+  esac
+  ],
+  [AC_MSG_RESULT(no)
+   efence_lib=""
+   AC_SUBST(efence_lib)
+  ],
+)
+
+builddir=`pwd`
+AC_SUBST(builddir)
+AC_PATH_PROG(AUTOCONF, autoconf, autoconf)
+AC_SUBST(AUTOCONF)
+AC_PATH_PROG(AUTOHEADER, autoheader, autoheader)
+AC_SUBST(AUTOHEADER)
+
+AC_OUTPUT(Makefile src/Makefile lib/Makefile fonts/Makefile scripts/Makefile include/Makefile)

@@ -1,0 +1,275 @@
+RIO 500 Support 
+---------------
+
+This set of utilities and driver have been written so that Linux, FreeBSD,
+OpenBSD and NetBSD users can use their Rio500 without the need to reboot
+to 'that other OS'.
+
+See the FreeBSD/OpenBSD/NetBSD section toward the end of this document
+and the file INSTALL.bsd for more information.
+
+At the moment the utilities can format the rio, add folders and
+add files (usually .mp3, but not really limited to any type) to the rio.
+The command rio_stat will read the rio and display a list of the folders
+and songs stored there. You can also download file from the rio using 
+rio_get_song and thanks to Tim Rice you can now use smartmedia cards. Even
+64MB media cards can be used if you have a firmware >= 2.11 on your rio.
+
+
+Before i explain how to use them please be warned:
+
+
+W A R N I N G:
+--------------
+
+Please note that this software is still under development.  The authors
+are in no way responsible for any damage that may occur, no matter how
+inconsequential.
+
+It seems that the Rio has a problem when sending .mp3 with low batteries.
+I suggest when the batteries are low and want to transfer stuff that you
+replace it with a fresh one. In my case, what happened is i lost two 16kb
+blocks (they are no longer usable to store information to it). But i don't
+know if thats normal or not. It could simply be a problem with the flash 
+memory.
+
+In an extreme case, I left my Rio playing overnight and the batteries wore 
+down to nothing and appear to have corrupted the flash memory. My RIO 
+needed to be replaced as a result.  Diamond tech support is aware of the 
+problem.  Do NOT allow your batteries to wear down to nothing before 
+changing them.  It appears RIO 500 firmware does not handle low battery 
+power well at all. 
+
+On systems with OHCI controllers, the kernel OHCI code appears to have 
+power on problems with some chipsets.  If you are having problems 
+connecting to your RIO 500, try turning it on first and then plugging it 
+into the USB cable.  
+
+
+Getting started with the kernel side driver module:
+---------------------------------------------------
+
+Requirements (linux specific):
+
+These utilities requires that you have a 2.3.x kernel or later or are
+using a 2.2.15preXX or later kernel with 2.3 series usb support backported
+in place. For those planning on using the userspace driver, a 2.3.99pre3 or
+later kernel is HIGHLY recommended.  For more information about kernel and
+driver setup, see the INSTALL document.  To compile this version you'll
+also need the glib library. You should get it from http://www.gtk.org if it
+is not already installed on your system.
+
+Requirements (*bsd specific):
+	
+See the file INSTALL.bsd and the section *BSD at the end of this document.
+
+
+Getting starting with the Rio500 utilities (all platforms):
+----------------------------------------------------------
+
+With the driver setup and the utilities compiled, as outlined in the INSTALL
+or INSTALL.bsd document you should be ready to get started. So . .
+
+1) You should now format the rio. Keep in mind that formatting the
+   rio will erase ALL its content.
+
+           rio_format
+
+2) You can add folders to the rio with the rio_add_folder command. It takes
+   as an argument the name of the folder. If you don't type a name it
+   creates a folder called mp3.  You can add more than 1 folder at a time.
+
+           rio_add_folder folder1 folder2
+
+   Currently, you may add up to 8 folders to the rio.
+   For a listing of available switches try rio_add_folder --help
+
+3) Start adding songs! Use the command rio_add_song for that. rio_add_song
+   will allow you to specify as many songs as you wish to add or use 
+   wildcards if you wish.
+
+   	  rio_add_song beatit1.mp3 beatit2.mp3 beatit3.mp3
+   or
+  	  rio_add_song /usr/local/mp3/BBKing/*.mp3
+
+   By default, this will add songs to the first folder on your rio.  To add
+   to a different folder, use the --folder switch.  This will allow you to
+   specify the index number of the folder to use (first folder is 0, second
+   folder is 1, etc)
+	  
+	  rio_add_song --folder 1 /usr/local/mp3/BBKing/*.mp3
+
+   For a listing of available switches try rio_add_song --help 
+
+4) You can add an entire directory of mp3 files to the rio at one time.  
+   To do so, you will use the rio_add_directory command, which take a mandatory 
+   argument of the directory name and optional arguments of folder number, 
+   font name, and font number. Defaults for the three, if none are provided 
+   are folder number=0 (first folder), font name = defjam.fon and font 
+   number = 0 (1st font within the .fon file). Directory names with spaces 
+   may be used so long as the directory name is enclosed in quotes. File 
+   names with spaces are not a problem.  All fonts which are to be used
+   must be contained in the fonts directory located in
+   /usr/local/share/rio500/fonts
+
+   Example: 
+
+   rio_add_directory "/usr/local/mp3/good songs" 1 genesis.fon 0
+
+   This will add all the .mp3 files in "/usr/local/mp3/good songs" into 
+   folder 1 (2nd folder) on the rio and will use the 0th font contained in 
+   the genesis.fon file, which is located in the <rio_source>/fonts directory.
+
+   Note: This script is a holdover from v0.5  Now that multiple song/wildcard
+   support has been added to rio_add_song, it is easier to use that.
+   Additionally, you could use something like
+
+		 find /usr/local/mp3 *.mp3  | xargs rio_add_song
+
+   to search all subdirs of /usr/local/mp3 and add the mp3's found.
+   
+8) The command rio_stat will display a list of the content of your Rio
+   (with some other information) and the amount of memory left.
+
+9) If you wish to delete an individual song or folder, use rio_del_song.
+   rio_del_song supports deletion of a single song, multiple songs within
+   the same folder, or an entire folder at once.  To delete a single song, try
+	
+	  rio_del_song --folder 1 0
+
+   This would delete song of index=0 (first song) from the folder of index=1
+   second folder.  To delete multiple songs, it would look as follows
+
+	  rio_del_song --folder 1 0 3 4 6
+
+   This would delete songs with indices 0,3,4,6 from folder index=1.  To
+   delete all of folder index=2 you would do
+
+	  rio_del_song --wholefolder 2
+
+   rio_del_song also has a new feature, letting you delete songs/folders by name.
+   This is activated with the --byname switch.  For example:
+
+	  rio_del_song --byname --folder keith0 song1.mp3 song2.mp3 song3.mp3	  
+
+   For an overview of the available switches, try rio_del_song --help
+
+10) If you want to download stuff from the rio use the program rio_get_song.
+    This program uses two arguments: the first is the song number and the
+    second is the folder number. If the folder number is ommitted then folder
+    0 (first folder) is assumed. WARNING: do not interrupt a transfer! If you
+    do its almost sure that you'll loose the content of your rio! This is
+    because of the way rio_get song works. Since the Rio is not designed to be
+    used in that way its basically a hack. You won't cause any damage to the
+    device: it simply looses the folder information and therefore it no longer
+    knows where the content is stored.
+	
+Fonts:
+------
+
+You will notice that you can use several fonts for the names displayed on
+your Rio screen. The font files are stored in the directory:
+$(install_prefix)/share/rio500/fonts (usually install_prefix is /usr/local).
+The fonts are stored in .fon format (used by windows). A recomended 
+default font is, if you feel the default is too wild for you is hl1.fon which
+is quite similar to the windows default.
+
+
+Uninstalling the software:
+-------------------------
+
+If for some reason you wish to uninstall these utilites, then, logged
+as root go to the rio500-vX.X directory and do:
+
+     make uninstall
+
+This will remove the utilites and fonts which are installed in 
+$(install_prefix)/share/rio500/fonts.
+
+
+FreeBSD / NetBSD / OpenBSD
+--------------------------
+
+   Support for the Rio 500 MP3 player is available in FreeBSD
+   4.0-STABLE, 5.0-CURRENT, NetBSD CURRENT and OpenBSD CURRENT.
+
+   For install information, see INSTALL.bsd
+
+   See the manual page for the urio driver (`man urio'). If you need
+   more help, please send mail to usb-bsd@egroups.com.
+   
+   FreeBSD: The rio utility is available in the ports directory in
+   audio/rio500.
+
+Contact information:
+--------------------
+
+   The main page for the project is hosted at sourceforge.net in the following
+   address: http://rio500.sourceforge.net You can also go to the sourceforge
+   project page at: http://sourceforge.net/project/?group_id=1944 There is 
+   also a mailing list: rio500-users@lists.sourceforge.net
+
+
+Authors:
+-------
+
+Most of the initial code was written by Cesar Miquel <miquel@df.uba.ar>.
+
+Keith Clayton <kclayton@jps.net> is incharge of the PPC port and extended
+the utilities to handle multiple file/folder additions and deletions.
+
+Bruce Tenison <btenison@dibbs.net> added support for .fon files and wrote in
+support for the linux 2.4 usbdevfs in creating a userspace driver for linux.
+
+BSD support has been added through the contributions of Iwasa Kazmi
+<kzmi@ca2.so-net.ne.jp>, Dirk-Willem van Gulik <dirkx@webweaving.org>,
+and Nick Hibma <n_hibma@calcaphon.com>.
+
+ID3v1 support is brought to us by Tomoaki MITSUYOSHI <micchan@geocities.co.jp>.
+
+Smartmedia support was provided by Tim Rice <Tim.Rice@msisolutions.com>.
+
+We would also like to thank Tri Nguyen <tmn_3022000@hotmail.com> who provided 
+us with some important information regarding the communication with the Rio.
+
+I'm sure there are others involved who I'm neglecting.
+Feel free to let me know (keith).
+
+
+File List:
+----------
+
+Configuration file:
+config.h
+
+
+Command utilities:
+rio_add_folder.c
+rio_add_song.c
+rio_del_song.c
+rio_get_song.c
+rio_format.c
+rio_stat.c
+
+Linux kernel module code:
+rio500_usb.h
+driver.c
+
+Library that handles low level comm. with the rio:
+librio500.c
+librio500.h
+usbdrvlinux.c
+usbdevfs.h
+usbdevice_fs.h
+
+Libraries and font files used to write to the rio screen:
+libpsf.c
+libpsf.h
+libfon.c
+libfon.h
+fonts/*
+
+
+Last updated:                                                  Jun 13, 2000.
+
+

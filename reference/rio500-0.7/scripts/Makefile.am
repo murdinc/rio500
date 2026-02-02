@@ -1,0 +1,1 @@
+bin_SCRIPTS=rio_add_directory

@@ -1,0 +1,108 @@
+Choosing your driver
+--------------------
+
+With linux there are 3 options available to drive the rio500
+
+(1) Kernel module downloaded from Rio500 sourceforge page 
+
+(2) Set the rio500 driver to be compiled directly into the kernel
+    or compiled as a module if using kernel 2.3.51 or higher
+
+(3) Use the new userspace driver 
+
+In all cases, you must have the general usb support installed. 
+This entails either compiling usb support into your kernel or
+compiling usb support as modules and loading the modules.  Once
+this is done, you are ready to load the rio driver.
+
+
+Option (1) -- downloaded kernel module
+
+* Download rio500-linux-driver.tar.gz from the
+  Rio500 project page, http://sourceforge.net/project/?group_id=1944
+
+* Install the latest modutils (2.3.10 at the time of writing) to insure that
+  depmod recognizes the existence of a /lib/modules/<kernel ver>/usb 
+  directory.
+
+* tar -xvzf rio500-linux-driver.tar.gz 
+  make
+  make install
+
+* This will build the driver module and install it into
+  /lib/modules/<current kernel>/usb/rio500.o  It will also make a node
+  for access in /dev/usb/rio500
+
+* At this point, make sure you have usb support either compiled into your
+  kernel or have the necessary usb modules loaded.  If so, as root,
+  insmod rio500 and the driver is now ready.
+
+Option (2) -- built from kernel sources (2.3.51 or higher)
+
+* If you have compiled rio500 support directly into the kernel or
+  compiled it as a module from kernel sources, you will need to make a node for
+  access.  First ls -l /dev | grep usb and see if there is a usb subdirectory
+  within /dev.  If not, mkdir /dev/usb.  Next, mknod /dev/usb/rio500 c 180 64
+  Now, make sure usb support is loaded and insmod rio500.
+
+
+Option (3) -- userspace driver
+
+* The userspace driver has only be tested on 2.3.99-pre3 kernels
+  and up.  If you are choosing this option, it is highly recommended that
+  you kernel version meet this minimum.  The userspace driver did not
+  function properly on earlier development kernels.
+
+* The userspace driver relies on Linux usb support together with the 
+  usbdevfs to provide access to usb devices.  In order to use the
+  userspace driver, first you must make sure that usb support is loaded.
+  Next, usbdevfs support must be compiled into your kernel and the 
+  usbdevfs mounted.  Currently, you may mount the usbdevfs with default
+  permissions, which will require you to be root to run the rio utils or
+  you may set more lax permissions for the entire usbdevfs.  To keep the
+  permissions tight, use
+	 mount -t usbdevfs none /proc/bus/usb
+  
+  To mount usbdevfs such that an ordinary (non-root) user can read and
+  write data to the rio,
+	 mount -t usbdevfs -o devmode=0666 none /proc/bus/usb
+
+  Note:  I have found usbdevfs mounted in this manner to be rather 
+  unstable.  I can't say at this point whether this is my config
+  specifically, whether its usbdevfs on ppc or whether -o devmode=0666 is
+  just very unstable at the moment.  Anyhow, I've had my share of hard
+  lockups with this.  I have not had any problems when running as root. (keith)
+  
+* In addition you will need to configure usbdevfs support into the
+  rio500 tools.  This will be discussed below.
+
+
+Configuring and building the tools
+----------------------------------
+
+./configure 
+
+** Use ./configure --help to see available configure options.  If you are
+planning to use the userspace driver, you must feed configure the
+--with-usbdevfs option.  If you want to utilize the new ID3support, you must
+configure it using --with-id3support.  Since both these are new options, they
+are not set by default **
+
+
+make
+
+make install
+
+
+Available utilities
+-------------------
+rio_format
+rio_stat
+rio_font_info
+rio_add_folder
+rio_add_song
+rio_del_song
+rio_get_song
+
+Help is available for any of these utilities using --help
+

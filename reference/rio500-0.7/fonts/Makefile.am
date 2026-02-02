@@ -1,0 +1,3 @@
+data_DATA = 6581.fon amiga.fon amplitud.fon atopaz.fon blackout.fon camels.fon cbm64.fon ce.fon defjam.fon dynamic.fon flt.fon future.fon genesis.fon heretic2.fon hl1.fon hl2.fon icoin.fon kung_fu.fon noname.fon phont.fon q1c.fon q2c.fon qu.fon sac.fon shylock.fon sin.fon star.fon trek.fon triangle.fon font-bitmaps.psf Readme.txt ck.nfo
+EXTRA_DIST = 6581.fon amiga.fon amplitud.fon atopaz.fon blackout.fon camels.fon cbm64.fon ce.fon defjam.fon dynamic.fon flt.fon future.fon genesis.fon heretic2.fon hl1.fon hl2.fon icoin.fon kung_fu.fon noname.fon phont.fon q1c.fon q2c.fon qu.fon sac.fon shylock.fon sin.fon star.fon trek.fon triangle.fon font-bitmaps.psf Readme.txt ck.nfo
+

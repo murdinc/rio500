@@ -1,0 +1,11 @@
+* Bring rio_get_song up to level of other utils (long switch support
+  downloading by name, downloading multiple songs at once, etc)
+
+* ID3v2 support
+
+* Add an interrupt handler that handles ctrl-c, signals, etc so the
+  user can interrupt the current transfer. This function should send
+  a reset_pipe message to the driver (which would have to be a new ioctl)
+  and should turn off Comm mode, close the file /dev/usb/rio500, and exit.
+
+* Have spec file built during configure 
